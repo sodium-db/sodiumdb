@@ -1,6 +1,6 @@
 use std::sync::Mutex;
 use actix_web::{HttpServer, App, Responder, HttpResponse, web, post};
-use managers::data_manager::{MANAGER, DataManager};
+use managers::data_manager::{MANAGER, DataManager, SETTINGS};
 
 mod middleware;
 mod managers;
@@ -47,15 +47,17 @@ async fn delete(data: web::Json<managers::data_manager::EntryBody>) -> impl Resp
 async fn main() -> std::io::Result<()> {
     unsafe {
         MANAGER = Mutex::new(Some(DataManager::new("./dbs/db.json", "./dbs/settings.json")));
+        let s_data = &SETTINGS.clone().unwrap();
+    
+        HttpServer::new(|| {
+            App::new()
+                .service(create)
+                .service(read)
+                .service(delete)
+                .wrap(middleware::password::PasswordMiddleware)
+            })
+        .bind((s_data.address.as_ref(), s_data.port))?
+        .run()
+        .await
     }
-    HttpServer::new(|| {
-        App::new()
-            .service(create)
-            .service(read)
-            .service(delete)
-            .wrap(middleware::password::PasswordMiddleware)
-        })
-    .bind(("127.0.0.1", 8080))?
-    .run()
-    .await
 }

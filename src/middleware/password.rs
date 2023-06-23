@@ -52,7 +52,7 @@ where
             match auth {
                 Some(val) => {
                     auth_check = val.to_str().unwrap();
-                    if auth_check == managers::data_manager::SETTINGS.clone().unwrap().get("password").unwrap().as_str().unwrap() {
+                    if auth_check == &managers::data_manager::SETTINGS.clone().unwrap().password {
                         auth_status = true;
                     } else {
                         auth_status = false;

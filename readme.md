@@ -20,7 +20,9 @@ A blazingly fast 🚀, low overhead ⬇️, in-memory store built in Rust.
 6. In settings.json, follow this example:
 ```json
 {
-    "password": "myAmazingPassword"
+    "password": "myAmazingPassword",
+    "address": "127.0.0.1",
+    "port": 8080
 }
 ```
 7. Navigate to the project directory and run `cargo run --release` in the command line. (Do not worry about compile time or a somewhat large binary, this is normal)
