@@ -53,7 +53,7 @@ fn load_json(path: &str) -> std::fs::File {
         .truncate(true)
         .create(true)
         .read(false)
-        .open(path.clone())
+        .open(path)
         .unwrap()
 }
 

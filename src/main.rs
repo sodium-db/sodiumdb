@@ -11,7 +11,7 @@ async fn create(data: web::Json<serde_json::Value>) -> impl Responder {
         let json_data = &data.0;
         let mut guard = MANAGER.lock().unwrap();
         let dm = guard.as_mut().unwrap();
-        dm.extend(json_data.clone());
+        dm.extend(json_data.to_owned());
         HttpResponse::Ok().json(data)
     }
 }
@@ -24,7 +24,7 @@ async fn read(data: web::Json<managers::data_manager::EntryBody>) -> impl Respon
         let response_data = dm.get(&data.0.entry);
         match response_data {
             Some(res) => {
-                HttpResponse::Ok().json(res.clone())
+                HttpResponse::Ok().json(res)
             }
             None => {
                 HttpResponse::BadRequest().body("Data Not Found")
