@@ -33,7 +33,7 @@ A blazingly fast, low overhead, in-memory store built in Rust.
 ```
 
 ### Interaction with the DB (Subject To Change)
-As of now, Sodium has 3 endpoints; `/create`, `/read` and `/delete`.
+As of now, Sodium has 3 endpoints; `/create`, `/read` and `/delete`, all of which use the POST method.
 
 Create requires a JSON body. Simply add a JSON body to your request and it'll write it to the database.\
 Read and Delete are very similar. Follow the following example:
