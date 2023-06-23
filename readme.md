@@ -10,6 +10,7 @@ A blazingly fast 🚀, low overhead ⬇️, in-memory store built in Rust.
 - Low overhead (Potentially under 500kb RAM Usage at startup)
 - Simple set up with JSON files
 - Blazingly Fast (Response times under 10ms even with hundreds of entries)
+- Memory and Thread safety with the Mutex module
 
 ### Getting started 🔎 (Subject To Change)
 1. To get started, install the [Rust Compiler](https://www.rust-lang.org/)
