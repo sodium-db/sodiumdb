@@ -45,4 +45,10 @@ Read and Delete are very similar. Follow the following example:
 ```
 Read will get the value of the entry if it exists, and Delete will delete it.
 
+**Here is a basic read request using Python:**
+```python
+r = requests.post('http://127.0.0.1:8080/read', headers={"Authorization": "myAmazingPassword"}, json={"entry": "hello"})
+print(r.json()) # prints the value of key 'hello' if it exists
+```
+
 That's the guide for now. **Any Questions?** Open an issue, or contact me on discord @rainydevzz <3
