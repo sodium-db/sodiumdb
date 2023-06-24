@@ -1,4 +1,4 @@
-use std::sync::Mutex;
+use std::{sync::Mutex, io::BufWriter, fs::File};
 use serde_json;
 use serde::{Deserialize, Serialize};
 
@@ -33,34 +33,33 @@ impl DataManager {
     }
 
     pub fn extend(&mut self, data: serde_json::Value) {
-        self.db.as_object_mut().unwrap().extend(data.as_object().unwrap().clone());
+        self.db.as_object_mut().unwrap().extend(data.as_object().unwrap().to_owned());
         let f = load_json(&self.db_path);
-        f.set_len(0).unwrap();
         serde_json::to_writer(f, &self.db).unwrap();
     }
 
     pub fn remove(&mut self, resource: &str) {
         self.db.as_object_mut().unwrap().remove(resource).unwrap();
         let f = load_json(&self.db_path);
-        f.set_len(0).unwrap();
         serde_json::to_writer(f, &self.db).unwrap();
     }
 }
 
-fn load_json(path: &str) -> std::fs::File {
-    std::fs::OpenOptions::new()
+fn load_json(path: &str) -> BufWriter<File> {
+    let f = std::fs::OpenOptions::new()
         .write(true)
         .truncate(true)
         .create(true)
         .read(false)
         .open(path)
-        .unwrap()
+        .unwrap();
+    std::io::BufWriter::new(f)
 }
 
 fn load_db(path: &str) -> serde_json::Value {
-    let settings_data = std::fs::read_to_string(path).expect("Failed to read");
-        let settings_json: serde_json::Value = serde_json::from_str(&settings_data).expect("Make sure to type '{}' inside of db.json as well as properly set up settings.json.");
-        settings_json
+    let db_data = std::fs::read_to_string(path).expect("Failed to read");
+    let db_json: serde_json::Value = serde_json::from_str(&db_data).expect("Make sure to type '{}' inside of db.json as well as properly set up settings.json.");
+    db_json
 }
 
 fn load_data(path: &str) -> SettingsBody {
