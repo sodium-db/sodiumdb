@@ -579,6 +579,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d4345964bb142484797b161f473a503a434de77149dd8c7427788c6e13379388"
 
 [[package]]
+name = "lazy_static"
+version = "1.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
+
+[[package]]
 name = "libc"
 version = "0.2.146"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -917,13 +923,15 @@ dependencies = [
 
 [[package]]
 name = "sodiumdb"
-version = "0.2.2"
+version = "0.2.3"
 dependencies = [
  "actix-http",
  "actix-web",
  "futures-util",
+ "lazy_static",
  "serde",
  "serde_json",
+ "tokio",
 ]
 
 [[package]]

@@ -1,6 +1,6 @@
 [package]
 name = "sodiumdb"
-version = "0.2.2"
+version = "0.2.3"
 edition = "2021"
 
 [profile.dev]
@@ -11,11 +11,16 @@ lto = true
 codegen-units = 1
 
 [profile.release]
-opt-level = "z"
-overflow-checks = true
-strip = true
+opt-level = 3
+debug = false
+split-debuginfo = 'off'
+debug-assertions = false
+overflow-checks = false
 lto = true
-codegen-units = 1
+panic = 'unwind'
+incremental = true
+codegen-units = 6
+rpath = false
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -25,3 +30,5 @@ actix-http = "3.3.1"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0.97"
 futures-util = "0.3"
+tokio = "1.28.2"
+lazy_static = "1.4.0"

@@ -1,4 +1,4 @@
-use std::{sync::Mutex, io::BufWriter, fs::File};
+use std::{io::BufWriter, fs::File};
 use serde_json;
 use serde::{Deserialize, Serialize};
 
@@ -14,16 +14,14 @@ pub struct SettingsBody {
     pub address: String
 }
 
-
 pub struct DataManager {
     pub db: serde_json::Value,
     pub db_path: String
 }
 
 impl DataManager {
-    pub fn new(db_location: &str, settings_location: &str) -> Self {
+    pub fn new(db_location: &str) -> Self {
         let db = load_db(db_location);
-        load_data(settings_location);
         let db_path = db_location.to_string();
         DataManager { db, db_path }
     }
@@ -62,7 +60,7 @@ fn load_db(path: &str) -> serde_json::Value {
     db_json
 }
 
-fn load_data(path: &str) -> SettingsBody {
+pub fn load_data(path: &str) -> SettingsBody {
     unsafe {
         let settings_data = std::fs::read_to_string(path).expect("Failed to read");
         let settings_json: SettingsBody = serde_json::from_str(&settings_data).expect("Make sure to type '{}' inside of db.json as well as properly set up settings.json.");
@@ -71,5 +69,5 @@ fn load_data(path: &str) -> SettingsBody {
     }
 }
 
-pub static mut MANAGER: Mutex<Option<DataManager>> = Mutex::new(None);
+lazy_static::lazy_static! { pub static ref MANAGER: tokio::sync::Mutex<Option<DataManager>> = tokio::sync::Mutex::new(Some(DataManager::new("./dbs/db.json")));}
 pub static mut SETTINGS: Option<SettingsBody> = None;
