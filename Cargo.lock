@@ -929,9 +929,9 @@ dependencies = [
  "actix-web",
  "futures-util",
  "lazy_static",
+ "parking_lot",
  "serde",
  "serde_json",
- "tokio",
 ]
 
 [[package]]
