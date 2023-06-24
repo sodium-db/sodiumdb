@@ -42,7 +42,6 @@ async fn main() -> std::io::Result<()> {
     unsafe {
         load_data("./dbs/settings.json");
         let s_data = &SETTINGS.clone().unwrap();
-    
         HttpServer::new(|| {
             App::new()
                 .service(create)
