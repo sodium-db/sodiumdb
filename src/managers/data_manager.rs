@@ -1,4 +1,4 @@
-use std::{io::BufWriter, fs::File};
+use std::{io::BufWriter, fs::File, collections::HashMap};
 use serde_json;
 use serde::{Deserialize, Serialize};
 
@@ -15,7 +15,7 @@ pub struct SettingsBody {
 }
 
 pub struct DataManager {
-    pub db: serde_json::Value,
+    pub db: HashMap<String, serde_json::Value>,
     pub db_path: String
 }
 
@@ -31,13 +31,15 @@ impl DataManager {
     }
 
     pub fn extend(&mut self, data: serde_json::Value) {
-        self.db.as_object_mut().unwrap().extend(data.as_object().unwrap().to_owned());
+        for (k, v) in data.as_object().unwrap() {
+            self.db.insert(k.to_owned(), v.to_owned());
+        }
         let f = load_json(&self.db_path);
         serde_json::to_writer(f, &self.db).unwrap();
     }
 
     pub fn remove(&mut self, resource: &str) {
-        self.db.as_object_mut().unwrap().remove(resource).unwrap();
+        self.db.remove(resource).unwrap();
         let f = load_json(&self.db_path);
         serde_json::to_writer(f, &self.db).unwrap();
     }
@@ -46,18 +48,17 @@ impl DataManager {
 fn load_json(path: &str) -> BufWriter<File> {
     let f = std::fs::OpenOptions::new()
         .write(true)
-        .truncate(true)
-        .create(true)
+        .truncate(false)
         .read(false)
         .open(path)
         .unwrap();
     std::io::BufWriter::new(f)
 }
 
-fn load_db(path: &str) -> serde_json::Value {
+fn load_db(path: &str) -> HashMap<String, serde_json::Value> {
     let db_data = std::fs::read_to_string(path).expect("Failed to read");
     let db_json: serde_json::Value = serde_json::from_str(&db_data).expect("Make sure to type '{}' inside of db.json as well as properly set up settings.json.");
-    db_json
+    serde_json::from_value(db_json).unwrap()
 }
 
 pub fn load_data(path: &str) -> SettingsBody {

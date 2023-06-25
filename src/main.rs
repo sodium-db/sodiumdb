@@ -1,7 +1,10 @@
 use actix_web::{HttpServer, App, Responder, HttpResponse, web, post};
 use managers::data_manager::{MANAGER, SETTINGS, load_data};
+use setup::setup;
+
 mod middleware;
 mod managers;
+mod setup;
 
 #[post("/create")]
 async fn create(data: web::Json<serde_json::Value>) -> impl Responder { 
@@ -41,6 +44,7 @@ async fn delete(data: web::Json<managers::data_manager::EntryBody>) -> impl Resp
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     unsafe {
+        setup();
         load_data("./dbs/settings.json");
         let s_data = &SETTINGS.clone().unwrap();
         HttpServer::new(|| {
