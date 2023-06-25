@@ -8,7 +8,7 @@ A great fit for high read/low write operations with uncompromising read times.
 ### Features 📦
 - Easy-to-use REST API out-of-the-box, powered by [Actix Web](https://actix.rs/)
 - Authorization out-of-the-box
-- Low overhead (Potentially under 500kb RAM Usage at startup)
+- Low overhead
 - Simple set up with JSON files
 - Blazingly Fast (Capable of several thousand req/s on all operations)
 - Memory and Thread safety with the Mutex module
