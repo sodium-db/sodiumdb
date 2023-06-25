@@ -5,16 +5,39 @@
 A blazingly fast 🚀, low overhead ⬇️, in-memory store built in Rust.
 
 ### Features 📦
-- Frontend REST API out-of-the-box, powered by [Actix Web](https://actix.rs/)
+- Easy-to-use REST API out-of-the-box, powered by [Actix Web](https://actix.rs/)
 - Authorization out-of-the-box
 - Low overhead (Potentially under 500kb RAM Usage at startup)
 - Simple set up with JSON files
-- Blazingly Fast (Capable of several thousand req/s on all operations)
+- Blazingly Fast (Capable of several thousand req/s on all operations, Great for high read/low write, Comparable w/ Redis)
 - Memory and Thread safety with the Mutex module
+
+### Benchmarks (Read Requests)
+Using wrk w/ Sodium (6 Threads/200 Connections)
+```
+Running 1s test @ http://127.0.0.1:8080/read
+  6 threads and 200 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     1.19ms  299.45us   4.59ms   91.48%
+    Req/Sec    27.63k    12.42k  122.79k    98.36%
+  167856 requests in 1.10s, 18.25MB read
+Requests/sec: 152706.87
+Transfer/sec:     16.60MB
+```
+Using redis-benchmark
+```
+ING_INLINE: 130039.02 requests per second
+PING_BULK: 135685.22 requests per second
+SET: 147492.62 requests per second
+GET: 139470.02 requests per second
+```
+10-20% faster reads!\
+Sodium's writes are still lagging behind Redis at about 100,000 req/s, but I am working to improve that.
 
 ### Getting started 🔎 (Subject To Change)
 1. To get started, install the [Rust Compiler](https://www.rust-lang.org/)
 2. Clone this repository to a desired directory.
+**The automatic setup function will do the rest for you. However, keep reading for manual configuration.**
 3. Within the project directory, create a folder called dbs.
 4. Within this folder, create 2 files; `settings.json` and `db.json`
 5. In db.json, simply type `{}`. Or, you can input some JSON for the DB to read and start with.

@@ -70,5 +70,5 @@ pub fn load_data(path: &str) -> SettingsBody {
     }
 }
 
-lazy_static::lazy_static! { pub static ref MANAGER: parking_lot::FairMutex<Option<DataManager>> = parking_lot::FairMutex::new(Some(DataManager::new("./dbs/db.json")));}
+lazy_static::lazy_static! { pub static ref MANAGER: parking_lot::Mutex<Option<DataManager>> = parking_lot::Mutex::new(Some(DataManager::new("./dbs/db.json")));}
 pub static mut SETTINGS: Option<SettingsBody> = None;
