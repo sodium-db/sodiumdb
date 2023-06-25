@@ -929,6 +929,7 @@ dependencies = [
  "actix-web",
  "futures-util",
  "lazy_static",
+ "num_cpus",
  "parking_lot",
  "serde",
  "serde_json",

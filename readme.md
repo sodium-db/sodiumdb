@@ -2,14 +2,15 @@
 
 **This project is still in early development. Expect bugs, lack of features, and little optimization at this time.**
 
-A blazingly fast 🚀, low overhead ⬇️, in-memory store built in Rust.
+A blazingly fast 🚀, low overhead ⬇️, in-memory store built in Rust.\
+A great fit for high read/low write operations with uncompromising read times.
 
 ### Features 📦
 - Easy-to-use REST API out-of-the-box, powered by [Actix Web](https://actix.rs/)
 - Authorization out-of-the-box
 - Low overhead (Potentially under 500kb RAM Usage at startup)
 - Simple set up with JSON files
-- Blazingly Fast (Capable of several thousand req/s on all operations, Great for high read/low write, Comparable w/ Redis)
+- Blazingly Fast (Capable of several thousand req/s on all operations)
 - Memory and Thread safety with the Mutex module
 
 ### Benchmarks (Read Requests)
@@ -36,7 +37,7 @@ Sodium's writes are still lagging behind Redis at about 100,000 req/s, but I am 
 
 ### Getting started 🔎 (Subject To Change)
 1. To get started, install the [Rust Compiler](https://www.rust-lang.org/)
-2. Clone this repository to a desired directory.
+2. Clone this repository to a desired directory.\
 **The automatic setup function will do the rest for you. However, keep reading for manual configuration.**
 3. Within the project directory, create a folder called dbs.
 4. Within this folder, create 2 files; `settings.json` and `db.json`
@@ -46,9 +47,11 @@ Sodium's writes are still lagging behind Redis at about 100,000 req/s, but I am 
 {
     "password": "myAmazingPassword",
     "address": "127.0.0.1",
-    "port": 8080
+    "port": 8080,
+    "workers": 1
 }
 ```
+workers is the amount of handlers that will process your requests; if you do not set it, it will be set to the number of physical cores on your machine.
 7. Navigate to the project directory and run `cargo run --release` in the command line. (Do not worry about compile time or a somewhat large binary, this is normal)
 
 ### Authorization 🔒 (Subject To Change)

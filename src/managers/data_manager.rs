@@ -1,4 +1,4 @@
-use std::{io::BufWriter, fs::File, collections::HashMap};
+use std::{io::{BufWriter}, fs::File, collections::HashMap};
 use serde_json;
 use serde::{Deserialize, Serialize};
 
@@ -11,7 +11,8 @@ pub struct EntryBody {
 pub struct SettingsBody {
     pub password: String,
     pub port: u16,
-    pub address: String
+    pub address: String,
+    pub workers: usize
 }
 
 pub struct DataManager {
@@ -38,10 +39,13 @@ impl DataManager {
         serde_json::to_writer(f, &self.db).unwrap();
     }
 
-    pub fn remove(&mut self, resource: &str) {
-        self.db.remove(resource).unwrap();
-        let f = load_json(&self.db_path);
-        serde_json::to_writer(f, &self.db).unwrap();
+    pub fn remove(&mut self, resource: &str) -> Option<serde_json::Value> {
+        let r = self.db.remove(resource);
+        let mut f = load_json(&self.db_path).into_inner().unwrap();
+        let c = &mut f;
+        c.set_len(0).unwrap();
+        serde_json::to_writer(&mut f, &self.db).expect("rah");
+        r
     }
 }
 

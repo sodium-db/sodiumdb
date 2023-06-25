@@ -36,8 +36,15 @@ async fn read(data: web::Json<managers::data_manager::EntryBody>) -> impl Respon
 #[post("/delete")]
 async fn delete(data: web::Json<managers::data_manager::EntryBody>) -> impl Responder {
     let mut guard = MANAGER.lock();
-    guard.as_mut().unwrap().remove(&data.0.entry);
-    HttpResponse::Ok().json(data)
+    let r = guard.as_mut().unwrap().remove(&data.0.entry);
+    match r {
+        Some(_) => {
+            HttpResponse::Ok().json(data)
+        }
+        None => {
+            HttpResponse::BadRequest().json("Data Not Found")
+        }
+    }
 
 }
 
@@ -55,6 +62,7 @@ async fn main() -> std::io::Result<()> {
                 .wrap(middleware::password::PasswordMiddleware)
             })
         .bind((s_data.address.as_ref(), s_data.port))?
+        .workers(s_data.workers)
         .run()
         .await
     }
