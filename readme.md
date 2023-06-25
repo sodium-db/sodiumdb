@@ -51,7 +51,7 @@ Sodium's writes are still lagging behind Redis at about 100,000 req/s, but I am 
     "workers": 1
 }
 ```
-workers is the amount of handlers that will process your requests; if you do not set it, it will be set to the number of physical cores on your machine.
+workers is the amount of handlers that will process your requests; if you do not set it, it will be set to the number of physical cores on your machine.\
 7. Navigate to the project directory and run `cargo run --release` in the command line. (Do not worry about compile time or a somewhat large binary, this is normal)
 
 ### Authorization 🔒 (Subject To Change)
