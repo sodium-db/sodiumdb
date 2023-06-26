@@ -9,7 +9,7 @@ mod setup;
 #[post("/create")]
 async fn create(data: web::Json<serde_json::Value>) -> impl Responder { 
     let json_data = &data.0;
-    let mut guard = MANAGER.lock();
+    let mut guard = MANAGER.write().unwrap();
     let dm = guard.as_mut().unwrap();
     dm.extend(json_data.to_owned());
     HttpResponse::Ok().json(data)
@@ -18,7 +18,7 @@ async fn create(data: web::Json<serde_json::Value>) -> impl Responder {
 
 #[post("/read")]
 async fn read(data: web::Json<managers::data_manager::EntryBody>) -> impl Responder {
-    let guard = MANAGER.lock();
+    let guard = MANAGER.read().unwrap();
     let dm = guard.as_ref().unwrap();
     let response_data = dm.get(&data.0.entry);
     let resp: HttpResponse;
@@ -35,7 +35,7 @@ async fn read(data: web::Json<managers::data_manager::EntryBody>) -> impl Respon
 
 #[post("/delete")]
 async fn delete(data: web::Json<managers::data_manager::EntryBody>) -> impl Responder {
-    let mut guard = MANAGER.lock();
+    let mut guard = MANAGER.write().unwrap();
     let r = guard.as_mut().unwrap().remove(&data.0.entry);
     match r {
         Some(_) => {
@@ -56,7 +56,7 @@ async fn main() -> std::io::Result<()> {
         let s_data = &SETTINGS.clone().unwrap();
 
         ctrlc::set_handler(|| {
-            let mut guard = MANAGER.lock();
+            let mut guard = MANAGER.write().unwrap();
             let dm = guard.as_mut().unwrap();
             write_to_json(&dm.db, &dm.db_path);
         }).expect("Error setting ctrlc handler");
@@ -65,7 +65,7 @@ async fn main() -> std::io::Result<()> {
         std::thread::spawn(move || {
             loop {    
                 std::thread::sleep(std::time::Duration::from_secs(secs.clone()));
-                let mut guard = MANAGER.lock();
+                let mut guard = MANAGER.write().unwrap();
                 let dm = guard.as_mut().unwrap();
                 write_to_json(&dm.db, &dm.db_path);
             }
