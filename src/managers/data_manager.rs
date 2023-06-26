@@ -12,7 +12,8 @@ pub struct SettingsBody {
     pub password: String,
     pub port: u16,
     pub address: String,
-    pub workers: usize
+    pub workers: usize,
+    pub snapshot_seconds: u64
 }
 
 pub struct DataManager {
@@ -35,24 +36,18 @@ impl DataManager {
         for (k, v) in data.as_object().unwrap() {
             self.db.insert(k.to_owned(), v.to_owned());
         }
-        let f = load_json(&self.db_path);
-        serde_json::to_writer(f, &self.db).unwrap();
     }
 
     pub fn remove(&mut self, resource: &str) -> Option<serde_json::Value> {
         let r = self.db.remove(resource);
-        let mut f = load_json(&self.db_path).into_inner().unwrap();
-        let c = &mut f;
-        c.set_len(0).unwrap();
-        serde_json::to_writer(&mut f, &self.db).expect("rah");
         r
     }
 }
 
-fn load_json(path: &str) -> BufWriter<File> {
+pub fn load_json(path: &str) -> BufWriter<File> {
     let f = std::fs::OpenOptions::new()
         .write(true)
-        .truncate(false)
+        .truncate(true)
         .read(false)
         .open(path)
         .unwrap();
@@ -72,6 +67,11 @@ pub fn load_data(path: &str) -> SettingsBody {
         SETTINGS = Some(settings_json.clone());
         settings_json
     }
+}
+
+pub fn write_to_json(value: &HashMap<String, serde_json::Value>, path: &str) {
+    let file = load_json(path);
+    serde_json::to_writer(file, value).unwrap();
 }
 
 lazy_static::lazy_static! { pub static ref MANAGER: parking_lot::Mutex<Option<DataManager>> = parking_lot::Mutex::new(Some(DataManager::new("./dbs/db.json")));}

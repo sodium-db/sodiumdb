@@ -1,5 +1,5 @@
 use actix_web::{HttpServer, App, Responder, HttpResponse, web, post};
-use managers::data_manager::{MANAGER, SETTINGS, load_data};
+use managers::data_manager::{MANAGER, SETTINGS, load_data, write_to_json};
 use setup::setup;
 
 mod middleware;
@@ -54,6 +54,22 @@ async fn main() -> std::io::Result<()> {
         setup();
         load_data("./dbs/settings.json");
         let s_data = &SETTINGS.clone().unwrap();
+
+        ctrlc::set_handler(|| {
+            let mut guard = MANAGER.lock();
+            let dm = guard.as_mut().unwrap();
+            write_to_json(&dm.db, &dm.db_path);
+        }).expect("Error setting ctrlc handler");
+
+        let secs = s_data.snapshot_seconds;
+        std::thread::spawn(move || {
+            loop {    
+                std::thread::sleep(std::time::Duration::from_secs(secs.clone()));
+                let mut guard = MANAGER.lock();
+                let dm = guard.as_mut().unwrap();
+                write_to_json(&dm.db, &dm.db_path);
+            }
+        });
         HttpServer::new(|| {
             App::new()
                 .service(create)

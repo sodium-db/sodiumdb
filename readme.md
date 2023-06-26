@@ -12,6 +12,7 @@ A great fit for high read/low write operations with uncompromising read times.
 - Simple set up with JSON files
 - Blazingly Fast (Capable of several thousand req/s on all operations)
 - Memory and Thread safety with the Mutex module
+- Point-In-Time Snapshot System to *heavily* optimize I/O
 
 ### Benchmarks (Read Requests)
 Using wrk w/ Sodium (6 Threads/200 Connections)
@@ -48,10 +49,12 @@ Sodium's writes are still lagging behind Redis at about 100,000 req/s, but I am 
     "password": "myAmazingPassword",
     "address": "127.0.0.1",
     "port": 8080,
-    "workers": 1
+    "workers": 1,
+    "snapshot_seconds": 30
 }
 ```
 workers is the amount of handlers that will process your requests; if you do not set it, it will be set to the number of physical cores on your machine.\
+snapshot_seconds is the time between each snapshot (when data is written to disk) in seconds. Less time between snapshots can reduce performance. Defaults to 30.\
 7. Navigate to the project directory and run `cargo run --release` in the command line. (Do not worry about compile time or a somewhat large binary, this is normal)
 
 ### Authorization 🔒 (Subject To Change)
