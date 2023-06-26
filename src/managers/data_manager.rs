@@ -74,5 +74,5 @@ pub fn write_to_json(value: &HashMap<String, serde_json::Value>, path: &str) {
     serde_json::to_writer(file, value).unwrap();
 }
 
-lazy_static::lazy_static! { pub static ref MANAGER: std::sync::RwLock<Option<DataManager>> = std::sync::RwLock::new(Some(DataManager::new("./dbs/db.json")));}
+lazy_static::lazy_static! { pub static ref MANAGER: parking_lot::Mutex<Option<DataManager>> = parking_lot::Mutex::new(Some(DataManager::new("./dbs/db.json")));}
 pub static mut SETTINGS: Option<SettingsBody> = None;
