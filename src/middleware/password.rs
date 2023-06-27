@@ -6,7 +6,7 @@ use actix_web::{
 };
 use futures_util::future::LocalBoxFuture;
 
-use crate::managers;
+use crate::managers::{self, data_manager::SETTINGS};
 
 pub struct PasswordMiddleware;
 
@@ -44,33 +44,48 @@ where
     forward_ready!(service);
 
     fn call(&self, req: ServiceRequest) -> Self::Future {
-        let auth = req.headers().get("Authorization");
-        let auth_check: &str;
-        let auth_status: bool;
+        if req.path() != "/" {
+            let auth = req.headers().get("Authorization");
+            let auth_check: &str;
+            let auth_status: bool;
 
-        unsafe {
-            match auth {
-                Some(val) => {
-                    auth_check = val.to_str().unwrap();
-                    if auth_check == &managers::data_manager::SETTINGS.clone().unwrap().password {
-                        auth_status = true;
-                    } else {
+            unsafe {
+                match auth {
+                    Some(val) => {
+                        auth_check = val.to_str().unwrap();
+                        if auth_check == &managers::data_manager::SETTINGS.as_ref().unwrap().password {
+                            auth_status = true;
+                        } else {
+                            auth_status = false;
+                        }
+                    }
+                    None => {
                         auth_status = false;
                     }
                 }
-                None => {
-                    auth_status = false;
+            }
+
+            if !auth_status {
+                let resp: HttpResponse<EitherBody<B>> = HttpResponse::Forbidden().body("Incorrect Password").map_into_right_body();
+                let (request, _pl) = req.into_parts();
+                return Box::pin( async {Ok(ServiceResponse::new(request, resp))});
+            }
+
+            unsafe {
+                let guard = &managers::data_manager::MANAGER.lock();  
+                let dm = guard.as_ref().unwrap();
+                let limit = SETTINGS.clone().unwrap().entry_limit;
+                if req.path() == "/create" {
+                    if dm.db.len() >= limit {
+                        if limit != 0 {
+                            let resp: HttpResponse<EitherBody<B>> = HttpResponse::BadRequest().body("Entry Limit Reached").map_into_right_body();
+                            let (request, _pl) = req.into_parts();
+                            return Box::pin( async {Ok(ServiceResponse::new(request, resp))});
+                        }
+                    }
                 }
             }
-        }
-
-        if !auth_status {
-            let resp: HttpResponse<EitherBody<B>> = HttpResponse::BadRequest().body("Incorrect Password").map_into_right_body();
-            let (request, _pl) = req.into_parts();
-            return Box::pin( async {Ok(ServiceResponse::new(request, resp))});
-        }
-        
-
+        }   
         let fut = self.service.call(req);
 
         Box::pin(async move {

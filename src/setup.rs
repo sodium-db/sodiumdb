@@ -14,7 +14,8 @@ pub fn setup() {
             "port": 8080,
             "password": "",
             "snapshot_seconds": 30,
-            "workers": num_cpus::get_physical()
+            "workers": num_cpus::get_physical(),
+            "entry_limit": 0
         })).expect("Failed to write to settings");
         println!("WARNING: No settings.json file was found so the password is empty. It is highly recommended you set one.");
     } else {
@@ -31,7 +32,8 @@ pub fn setup() {
             "port": 8080,
             "password": "",
             "snapshot_seconds": 30,
-            "workers": num_cpus::get_physical()
+            "workers": num_cpus::get_physical(),
+            "entry_limit": 0
             })).expect("Failed to write to settings");
             println!("WARNING: No settings.json file was found so the password is empty. It is highly recommended you set one.");
         }

@@ -14,8 +14,8 @@ A great fit for high read/low write operations with uncompromising read times.
 - Memory and Thread safety with the Mutex module
 - Point-In-Time Snapshot System to *heavily* optimize I/O
 
-### Benchmarks (Read Requests)
-Using wrk w/ Sodium (6 Threads/200 Connections)
+### Benchmarks
+Using wrk (6 Threads/200 Connections) w/ Sodium (1 Worker)
 ```
 Running 1s test @ http://127.0.0.1:8080/read
   6 threads and 200 connections
@@ -34,7 +34,19 @@ SET: 147492.62 requests per second
 GET: 139470.02 requests per second
 ```
 10-20% faster reads!\
-Sodium's writes are still lagging behind Redis at about 100,000 req/s, but I am working to improve that.
+Thanks to a point-in-time snapshot system, write speeds remain competitive as well:
+```
+Running 5s test @ http://127.0.0.1:8080/create
+  6 threads and 200 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     1.42ms  177.42us   4.93ms   96.91%
+    Req/Sec    23.35k     5.88k  124.15k    99.67%
+  699400 requests in 5.10s, 83.37MB read
+Requests/sec: 137151.24
+Transfer/sec:     16.35MB
+```
+
+## Introductory Guide 📖
 
 ### Getting started 🔎 (Subject To Change)
 1. To get started, install the [Rust Compiler](https://www.rust-lang.org/)
@@ -50,11 +62,13 @@ Sodium's writes are still lagging behind Redis at about 100,000 req/s, but I am 
     "address": "127.0.0.1",
     "port": 8080,
     "workers": 1,
-    "snapshot_seconds": 30
+    "snapshot_seconds": 30,
+    "entry_limit": 0
 }
 ```
 workers is the amount of handlers that will process your requests; if you do not set it, it will be set to the number of physical cores on your machine.\
 snapshot_seconds is the time between each snapshot (when data is written to disk) in seconds. Less time between snapshots can reduce performance. Defaults to 30.\
+entry_limit is the amount of entries in the database the server allows before rejecting create requests. It defaults to 0 (no limit).\
 7. Navigate to the project directory and run `cargo run --release` in the command line. (Do not worry about compile time or a somewhat large binary, this is normal)
 
 ### Authorization 🔒 (Subject To Change)
@@ -74,10 +88,19 @@ Read and Delete are very similar. Follow the following example:
 ```
 Read will get the value of the entry if it exists, and Delete will delete it.
 
-**Here is a basic read request using Python:**
+**Basic Ping Request:**
 ```python
-r = requests.post('http://127.0.0.1:8080/read', headers={"Authorization": "myAmazingPassword"}, json={"entry": "hello"})
-print(r.json()) # prints the value of key 'hello' if it exists
+r = requests.get('http://127.0.0.1:8080')
+assert r.text == "Hello! This endpoint is here to make sure the SodiumDB REST API is up and running properly :)"
 ```
+
+**Here is a basic read/write using Python:**
+```python
+requests.post('http://127.0.0.1:8080/create', headers={"Authorization": "myAmazingPassword"}, json={"hello": "world"})
+r = requests.post('http://127.0.0.1:8080/read', headers={"Authorization": "myAmazingPassword"}, json={"entry": "hello"})
+assert r.json()["result"] == "world"
+```
+Note that 4xx errors will always return text responses (i.e "Data Not Found" if a resource could not be found)\
+Ensure you account for this in your codebase, if needed.
 
 That's the guide for now. **Any Questions?** Open an issue, or contact me on discord @rainydevzz <3

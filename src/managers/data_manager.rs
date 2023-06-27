@@ -13,7 +13,8 @@ pub struct SettingsBody {
     pub port: u16,
     pub address: String,
     pub workers: usize,
-    pub snapshot_seconds: u64
+    pub snapshot_seconds: u64,
+    pub entry_limit: usize
 }
 
 pub struct DataManager {
