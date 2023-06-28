@@ -13,7 +13,7 @@ Set the HTTP Headers to the following format:
 }
 ```
 
-Unauthorized requests return a 401 Unauthorized error.\
+Unauthorized requests return a 401 Unauthorized error.
 
 ## /create
 "/create" accepts any valid JSON body.\
