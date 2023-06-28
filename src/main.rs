@@ -43,8 +43,8 @@ async fn delete(data: web::Json<managers::data_manager::EntryBody>) -> impl Resp
     let mut guard = MANAGER.lock();
     let r = guard.as_mut().unwrap().remove(&data.0.entry);
     match r {
-        Some(_) => {
-            HttpResponse::Ok().json(data)
+        Some(res) => {
+            HttpResponse::Ok().json(json!({&data.0.entry: res}))
         }
         None => {
             HttpResponse::BadRequest().json("Data Not Found")

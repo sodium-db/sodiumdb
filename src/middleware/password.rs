@@ -66,7 +66,7 @@ where
             }
 
             if !auth_status {
-                let resp: HttpResponse<EitherBody<B>> = HttpResponse::Forbidden().body("Incorrect Password").map_into_right_body();
+                let resp: HttpResponse<EitherBody<B>> = HttpResponse::Unauthorized().body("Incorrect Password").map_into_right_body();
                 let (request, _pl) = req.into_parts();
                 return Box::pin( async {Ok(ServiceResponse::new(request, resp))});
             }
