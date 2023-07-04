@@ -24,20 +24,26 @@ Example:
 This body will be inserted into the DB.\
 Returns the body you sent.
 
+## Document System
+SodiumDB now supports a document-like system. As in, you can query a "document" (a key whose value is a JSON Object) and query a key within the object.\
+In create you can simply set your value to a JSON object. However, you are now able to set up your "/delete" and "/read" bodies a little differently.
+
 ## /delete
-"/delete" must be formatted like so.
+In "/delete" you can set up an optional "doc" key to query a specific object.\
+If you'd like to delete a full object, simply omit "doc" and have "entry" be the name of the object's key.\
 Example:
 ```json
-{"entry": "hello"}
+{"entry": "hello", "doc": "hello"}
 ```
 Deletes the selected entry if it exists, and returns the key/value pair of the deleted element.\
 Returns a 400 Error if it does not exist.
 
 ## /read
-"/read" is formatted just like "/delete".
+In "/read" you can set up an optional "doc" key to query a specific object.\
+If you'd like to read a full object, simply omit "doc" and have "entry" be the name of the object's key.\
 Example:
 ```json
-{"entry": "hello"}
+{"entry": "hello", "doc": "hello"}
 ```
 Returns a json body like this: `{"result": "world"}`.\
 Like "/delete", returns a 400 Error if the selected key does not exist.

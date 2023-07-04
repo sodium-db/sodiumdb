@@ -4,7 +4,8 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct EntryBody {
-    pub entry: String
+    pub entry: String,
+    pub doc: Option<String>
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
@@ -29,8 +30,17 @@ impl DataManager {
         DataManager { db, db_path }
     }
 
-    pub fn get(&self, resource: &str) -> Option<&serde_json::Value> {
-        self.db.get(resource)
+    pub fn get(&self, resource: &EntryBody) -> Option<&serde_json::Value> {
+        if let Some(doc) = resource.doc.clone() {
+            let data = self.db.get(&doc);
+            if let Some(res) = data {
+                res.get(resource.entry.clone())
+            } else {
+                None
+            }
+        } else {
+            self.db.get(&resource.entry)
+        }
     }
 
     pub fn extend(&mut self, data: serde_json::Value) {
@@ -39,9 +49,17 @@ impl DataManager {
         }
     }
 
-    pub fn remove(&mut self, resource: &str) -> Option<serde_json::Value> {
-        let r = self.db.remove(resource);
-        r
+    pub fn remove(&mut self, resource: &EntryBody) -> Option<serde_json::Value> {
+        if let Some(doc) = resource.doc.clone() {
+            let data: Option<&mut serde_json::Value> = self.db.get_mut(&doc);
+            if let Some(res) = data {
+                res.as_object_mut().unwrap().remove(&resource.entry)
+            } else {
+                None
+            }
+        } else {
+            self.db.remove(&resource.entry)
+        }
     }
 }
 

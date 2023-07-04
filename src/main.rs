@@ -25,7 +25,7 @@ async fn create(data: web::Json<serde_json::Value>) -> impl Responder {
 async fn read(data: web::Json<managers::data_manager::EntryBody>) -> impl Responder {
     let guard = MANAGER.lock();
     let dm = guard.as_ref().unwrap();
-    let response_data = dm.get(&data.0.entry);
+    let response_data = dm.get(&data.0);
     let resp: HttpResponse;
     match response_data {
         Some(_) => {
@@ -41,7 +41,7 @@ async fn read(data: web::Json<managers::data_manager::EntryBody>) -> impl Respon
 #[post("/delete")]
 async fn delete(data: web::Json<managers::data_manager::EntryBody>) -> impl Responder {
     let mut guard = MANAGER.lock();
-    let r = guard.as_mut().unwrap().remove(&data.0.entry);
+    let r = guard.as_mut().unwrap().remove(&data.0);
     match r {
         Some(res) => {
             HttpResponse::Ok().json(json!({&data.0.entry: res}))

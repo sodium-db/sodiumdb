@@ -13,6 +13,8 @@ A great fit for high read/low write operations with uncompromising read times.
 - Blazingly Fast (Capable of several thousand req/s on all operations)
 - Memory and Thread safety with the Mutex module
 - Point-In-Time Snapshot System to *heavily* optimize I/O
+- Document-like System (see the [docs](https://github.com/sodium-db/sodiumdb/blob/master/docs.md) for more info)
+- Easy vertical scaling with workers
 
 ### Benchmarks
 Using wrk (6 Threads/200 Connections) w/ Sodium (1 Worker)
