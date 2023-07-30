@@ -105,4 +105,4 @@ assert r.json()["result"] == "world"
 Note that 4xx errors will always return text responses (i.e "Data Not Found" if a resource could not be found)\
 Ensure you account for this in your codebase, if needed.
 
-That's the guide for now. **Any Questions?** Open an issue, or contact me on discord @rainydevzz <3
+That's the guide for now. **Any Questions?** Open an issue, or contact me on Revolt @ Rainy#0699 or on [Matrix](https://matrix.to/#/@rainydevzz:matrix.org)
