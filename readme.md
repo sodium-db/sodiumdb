@@ -1,7 +1,7 @@
 # SodiumDB
 
 A blazingly fast 🚀, low overhead ⬇️, in-memory store built in Rust.\
-A great fit for high read/low write operations with uncompromising read times.
+A great fit for an easy out-of-the-box caching solution.
 
 ### Features 📦
 - Easy-to-use REST API out-of-the-box, powered by [Actix Web](https://actix.rs/)
